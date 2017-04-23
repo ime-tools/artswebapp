@@ -1,0 +1,206 @@
+{% extends "main.html" %}
+{% block mainbody %}
+    <div class="serverstats">
+        <ul class="list-inline">
+            <li class="statuslabel">Server Status &raquo;</li>
+            <li>Running: <span id="server-running">n/a</span></li>
+            <li>Queue: <span id="server-queue">n/a</span></li>
+            <li>Done: <span id="server-done">n/a</span></li>
+        </ul>
+    </div>
+<div class="container">
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-warning" role="alert">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        {% endwith %}
+    <div class="row">
+        <a href="/example" class="btn btn-primary" style="width:250px;">Open example output &raquo;</a>
+        <a href="/static/exampleinputs/example.gbk" class="btn btn-primary" style="width:250px;">Download example genbank &raquo;</a>
+        <br><hr>
+    </div>
+  <form action="startjob" method="post" enctype="multipart/form-data">
+    <div class="form-group row">
+        <h4>New Job</h4>
+        <h5>*** Starts a minimal antismash search. For an extended search use the full server at: <a href="http://antismash.secondarymetabolites.org/" target="_blank">http://antismash.secondarymetabolites.org/</a> and paste run id into "Existing Antismash Job"</h5>
+    </div>
+    <div class="form-group row">
+      <label for="ncbiacc" class="col-sm-2 col-form-label">NCBI Accession Number:</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" name="ncbiacc" id="ncbiacc">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="seqfile" class="col-sm-2 col-form-label">GenBank / EMBL / Fasta scaffolds</label>
+      <div class="col-sm-10">
+        <input type="file" class="form-control" name="seqfile" id="seqfile">
+      </div>
+    </div>
+
+    <div class="form-group row">
+        <h4>Existing Antismash Job</h4>
+    </div>
+    <div class="form-group row">
+      <label for="asjobid" class="col-sm-2 col-form-label">Job id</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" name="asjobid" id="asjobid" placeholder="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="asseqfile" class="col-sm-2 col-form-label">GenBank file <i>(X.final.gbk)</i></label>
+      <div class="col-sm-10">
+        <input type="file" class="form-control" name="asseqfile" id="asseqfile">
+      </div>
+    </div>
+
+    <div class="row">
+        <h4>General</h4>
+    </div>
+      <div class="form-group row">
+      <label for="email" class="col-sm-2 col-form-label">Email</label>
+      <div class="col-sm-10">
+        <input type="email" class="form-control" id="email" name="email" placeholder="(Optional)">
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-2" for="refset">Reference set</label>
+        <div class="col-sm-10">
+        <select name="refset" id="refset" class="form-control">
+            <option value="auto" disabled>Auto: Use best 16S rRNA match (if present)</option>
+            <option selected="selected" value="actinobacteria">Actinobacteria</option>
+            <option value="firmicutes" disabled>Firmicutes</option>
+            <option value="cyanobacteria" disabled>Cyanobacteria</option>
+            <option value="a-proteobacteria" disabled>Alpha-Proteobacteria</option>
+            <option value="b-proteobacteria" disabled>Beta-Proteobacteria</option>
+            <option value="d-proteobacteria" disabled>Delta-Proteobacteria</option>
+            <option value="e-proteobacteria" disabled>Epsilon-Proteobacteria</option>
+            <option value="g-proteobacteria" disabled>Gamma-Proteobacteria</option>
+        </select>
+      </div>
+
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-2">Options</label>
+      <div class="col-sm-10">
+          <div class="form-check">
+          <label class="form-check-label">
+            <input class="form-check-input disabled" type="checkbox" checked="True" disabled="True"> Duplication & BGC Proximity screen
+          </label>
+        </div>
+        <div class="form-check">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" checked="True" id="run-phyl" name="run-phyl"> Phylogeny screen (query must be same phyla as reference)
+          </label>
+        </div>
+          <div class="form-check">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" checked="True" id="run-kres" name="run-kres"> Resistance Model screen (scan for know resistance factors)
+          </label>
+        </div>
+        <div class="form-check">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="run-duf" name="run-duf"> Domain of unknown function screen (DUF)
+          </label>
+        </div>
+        <div class="form-check">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="run-expert" name="run-expert">
+              Exploration mode (<span data-toggle='tooltip' data-placement='top' title='Use all core genes in reference. May include more false positives. Standard search excludes transporters, regulators, and probable SM biosynthetic genes'>robust search</span>)
+          </label>
+        </div>
+        <div class="form-check">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="saverun" name="saverun"> Save link in cookies (viewable in results page)
+          </label>
+        </div>
+      </div>
+    </div>
+      <div class="row">
+        <a data-toggle="collapse" href="#advancedrow" aria-expanded="false" aria-controls="advancedrow" title="expand">
+            <h4>Advanced <span class="glyphicon glyphicon-plus"></span></h4>
+        </a>
+
+    </div>
+
+      <div class="collapse" id="advancedrow">
+      <div class="form-group row">
+          <label class="col-sm-2" for="custhmm">HMM search mode:</label>
+          <div class="col-sm-10">
+                <label class="radio-inline"><input type="radio" name="searchmode" checked="True" value="TC">Trusted Cutoff (TC)</label>
+                <label class="radio-inline"><input type="radio" name="searchmode" value="NC">Noise Cutoff (NC)</label>
+                <label class="radio-inline"><input type="radio" name="searchmode" value="E1">Explore 1 (90% NC)</label>
+                <label class="radio-inline"><input type="radio" name="searchmode" value="E2">Explore 2 (75% NC)</label>
+                <label class="radio-inline"><input type="radio" name="searchmode" value="E3">Explore 3 (50% NC)</label>
+              <br><br>
+              <p>*Cutoff method used for HMM detection. Thresholds defined by the curators of each HMM model where TC = lowest bit-score of proteins included in model and NC = highest bit-score of proteins not used in model</p>
+          </div>
+      </div>
+      <div class="form-group row">
+          <label class="col-sm-2" for="custhmm">Custom Resistance Model(s) (hmmer v3 file)</label>
+          <div class="col-sm-10"><input type="file" class="form-control" name="custhmm" id="custhmm"></div>
+      </div>
+      <div class="form-group row">
+          <label class="col-sm-2" for="custhmm">Custom Core Gene Model(s) (hmmer v3 file)</label>
+          <div class="col-sm-10"><input type="file" class="form-control" name="custcorehmm" id="custcorehmm"></div>
+      </div>
+          </div>
+
+    <div class="row">
+      <div class="offset-sm-2 col-sm-10">
+          <br>
+          <br>
+        <button type="submit" class="btn btn-primary" style="width:300px;" id="submitjob">Submit Job &raquo;</button>
+        <button type="button" class="btn btn-primary" style="width:300px; display:none;" disabled="true" id="fakebtn">Uploading... &raquo;</button>
+
+      </div>
+    </div>
+  </form>
+    </div>
+    </div>
+
+<script type="text/javascript">
+$('[data-toggle="tooltip"]').tooltip();
+function statusupdate(data) {
+    $("#server-running").html(data.running);
+    $("#server-queue").html(data.waiting);
+    $("#server-done").html(data.finished);
+    }
+
+var timer1 = 0;
+
+$("#submitjob").click(function(e){
+    $(this).css("display","none");
+    $("#fakebtn").css("display","block");
+})
+
+$(document).ready(function(){
+    $.getJSON('/serverstatus',statusupdate)
+    timer1 = setInterval(function() {
+        $.getJSON('/serverstatus',statusupdate)
+        }, 20000);
+    });
+
+$(window).focus(function() {
+    if (!timer1)
+        $.getJSON('/serverstatus',statusupdate);
+        timer1 = setInterval(function() {
+        $.getJSON('/serverstatus',statusupdate);
+    }, 20000);
+});
+
+$(window).blur(function() {
+    clearInterval(timer1);
+    timer1 = 0;
+});
+</script>
+
+
+{% endblock %}
