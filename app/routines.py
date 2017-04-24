@@ -20,11 +20,10 @@ import tempfile
 import re
 import time
 import json
-import subprocess
+#import subprocess
 
 from openpyxl import Workbook
-from ete3 import Tree
-from ete3 import NodeStyle
+#from ete3 import Tree
 from flask import request, g, flash
 from flask_mail import Message
 from redis import Redis
@@ -99,29 +98,35 @@ def which(program):
 #         temp["data"] = data
 #         return temp
 
-def rendertree(infile, width=800, spname=False):
-    #First try workaround for no Xserver
-    if which("xvfb-run"):
-        rtfile = os.path.join(os.path.split(os.path.realpath(__file__))[0],"rendertree.py")
-        child = subprocess.Popen(["xvfb-run","python",str(rtfile),"-in",str(infile),"-w",str(width),"-spname",str(spname)], stdout=subprocess.PIPE)
-        output = child.communicate()[0]
-        if child.returncode==0:
-            return True
-        return False
-    else:
-        T = Tree(infile)
-        nstyle = NodeStyle()
-        nstyle["bgcolor"] = "#00CC00"
-        nstyle["size"] = 10
-        if spname:
-            for node in T:
-                if "OUTGROUP" in node.name:
-                    T.set_outgroup(node)
-                    T.ladderize()
-                if spname in node.name:
-                    node.set_style(nstyle)
-
-        return T.render(infile+".png", w=width, units="px")
+# def rendertree(infile, width=800, spname=False):
+#     #First try workaround for no Xserver
+#     T = Tree(infile)
+#     if which("xvfb-run"):
+#         rtfile = os.path.join(os.path.split(os.path.realpath(__file__))[0],"rendertree.py")
+#         child = subprocess.Popen(["xvfb-run","python",str(rtfile),"-in",str(infile),"-w",str(width),"-spname",str(spname)], stdout=subprocess.PIPE)
+#         output = child.communicate()[0]
+#         if child.returncode==0:
+#             return True
+#         return False
+#     elif len(app.config.get("DISABLE_PYQT",False)):
+#         printpng(str(T),spname,"fonts/roboto.tff",16,offset=10)
+#     else:
+#         if spname:
+#             try:
+#                 for node in T:
+#                     if "OUTGROUP" in node.name:
+#                         T.set_outgroup(node)
+#                         T.ladderize()
+#                     if spname in node.name:
+#                         #Use styles if availible (PyQT) otherwise use TEXT
+#                         from ete3 import NodeStyle
+#                         nstyle = NodeStyle()
+#                         nstyle["bgcolor"] = "#00CC00"
+#                         nstyle["size"] = 10
+#                         node.set_style(nstyle)
+#                 return T.render(infile+".png", w=width, units="px")
+#             except ImportError:
+#                 printpng(str(T),spname,"fonts/roboto.tff",16,offset=10)
 
 def getdb():
     rddb = getattr(g,"_redisdb",False)

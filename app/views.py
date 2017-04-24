@@ -1,5 +1,6 @@
 
 import os, threading
+from rendertree import rendertree
 from flask import render_template, jsonify, request, redirect, abort, make_response, send_from_directory, flash, copy_current_request_context
 from app import app
 from app import routines
@@ -23,7 +24,7 @@ def gettreepng(jobid,tree,qorg=None):
     if fname and os.path.exists(os.path.join(treedir,fname)):
         if os.path.exists(os.path.join(treedir,fname+".png")):
             return send_from_directory(treedir,fname+".png",mimetype='image/png')
-        elif routines.rendertree(os.path.join(treedir,fname),800,qorg):
+        elif rendertree(os.path.join(treedir,fname),800,qorg):
             return send_from_directory(treedir,fname+".png",mimetype='image/png')
     return app.send_static_file("images/blank.png")
 
