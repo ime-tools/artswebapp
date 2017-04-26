@@ -1,0 +1,14 @@
+version: '2'
+services:
+  webserv:
+    build: .
+    ports:
+     - "7000:5000"
+    volumes:
+     - /Users/malanjary/artswebtest/results:/arts/results
+     - /Users/malanjary/artswebtest/uploads:/arts/upload
+     - /tmp:/arts/run
+  redis:
+    ports:
+     - "6379:6379"
+    image: "redis:alpine"
