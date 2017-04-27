@@ -350,6 +350,7 @@ $(document).ready(function(){
                 if (data.proximity == "Yes"){
                         $('td',row).eq(6).html("<span class='glyphicon glyphicon-ok'></span>");
                         $('td',row).eq(6).addClass("summtab_yes");
+                        $("#asresultslink").html("<a href='antismash/index.html' class='btn btn-primary' target='bgcwindow'>View BGC overview</a>");
                     }
                 else if (data.proximity == "No"){
                         $('td',row).eq(6).html("<span class='glyphicon glyphicon-remove'></span>");
@@ -371,7 +372,6 @@ $(document).ready(function(){
                             }
                             $("#genetreeselector").append($("<option></option>").attr("value",data.coregene).text(labeltext));
                             $("#gntreediv").html("<h5><span class='glyphicon glyphicon-arrow-up'></span> Select a gene tree above to view tree</h5>");
-                            $("#asresultslink").html("<a href='antismash/index.html' class='btn btn-primary' target='bgcwindow'>View BGC overview</a>");
                         }
                         clearTimeout(genetreetimer);
                         genetreetimer = setTimeout(sortgeneselector,3);
