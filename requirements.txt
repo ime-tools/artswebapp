@@ -1,3 +1,4 @@
+numpy==1.12.1
 aniso8601==1.2.0
 biopython==1.69
 blinker==1.4
@@ -23,3 +24,4 @@ pytz==2017.2
 redis==2.10.5
 six==1.10.0
 Werkzeug==0.12.1
+uWSGI==2.0.15
