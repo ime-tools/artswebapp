@@ -88,7 +88,9 @@ python2.7 and pip are pre-installed.
     pip2.7 install -r requirements.txt
 
 5) Edit config/artsapp_default.conf to direct to desired results and upload folders
-Default uwsgi configs can now be used to run the webserver at port :5000 using uwsgi from the artswebapp directory
+Default uwsgi configs can now be used to run the webserver at port :5000 using uwsgi from the artswebapp directory::
+
+    nano config/uwsgi.config
 
 6) Run artswebapp As a non-root user::
 
