@@ -58,8 +58,7 @@ Source install on RHEL6:
 This guide will compile python2.7 without disturbing the system's python2.6. Skip to step X if
 python2.7 and pip are pre-installed.
 
-1) Install prerequisites for building python2.7. If no package manager is present,
-ensure the host has these requirements (root / sudo required)::
+1) Install prerequisites for building python2.7. If no package manager is present, ensure the host has these requirements (root / sudo required)::
 
     yum groupinstall development
     yum install openssl-devel sqlite-devel zlib-devel git
@@ -88,14 +87,16 @@ ensure the host has these requirements (root / sudo required)::
 
     pip2.7 install -r requirements.txt
 
-Edit config/artsapp_default.conf to direct to desired results and upload folders
+5) Edit config/artsapp_default.conf to direct to desired results and upload folders
 Default uwsgi configs can now be used to run the webserver at port :5000 using uwsgi from the artswebapp directory
 
-5) Run artswebapp
-As a non-root user: ``uwsgi --ini config/uwsgi.config``
-As a root user override to serve on port 80: ``uwsgi --ini config/uwsgi.config --http-socket :80``
+6) Run artswebapp As a non-root user::
 
-The following may need to be set before users can connect: ``setsebool -P httpd_can_network_connect 1``
+    uwsgi --ini config/uwsgi.config
+
+The following may need to be set before users can connect::
+
+    setsebool -P httpd_can_network_connect 1
 
 Extra) Use nginx to proxy port 80 to 5000. As root::
 
