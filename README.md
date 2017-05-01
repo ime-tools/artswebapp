@@ -55,7 +55,7 @@ Installation on linux (Debian 8 tested):
 
 Source install on RHEL6:
 ------------------------
-This guide will compile python2.7 without disturbing the system's python2.6. Skip to step X if
+This guide will compile python2.7 without disturbing the system's python2.6. Skip to step 4 if
 python2.7 and pip are pre-installed.
 
 1) Install prerequisites for building python2.7. If no package manager is present, ensure the host has these requirements (root / sudo required)::
