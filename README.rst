@@ -2,13 +2,15 @@ ARTS Web server overview
 =========================
 
 This is a sub repository for the Antibiotic Resistant Target Seeker.
-This can be used to view results generated from the public server at https://arts.ziemertlab.com, or using output from the main analysis pipeline at https://bitbucket.org/ziemertlab/arts
+This can be used to view results generated from the public server at https://arts.ziemertlab.com
+or using output from the main analysis pipeline at https://bitbucket.org/ziemertlab/arts
+For usage of the web server see https://arts.ziemertlab.com/help
 
-Quickstart with Docker
------------------------
+Quickstart with Docker local installation
+------------------------------------------
 For details on setting up docker and docker-compose: https://docs.docker.com/compose/install/
 
-1) Make isolated directory and download the docker-compose file to install the pre-built ARTS containers::
+1) Make an isolated directory and download the docker-compose file to install the pre-built ARTS containers::
 
     mkdir ARTSwebapp_docker && cd ARTSwebapp_docker
     wget -O docker-compose.yml https://bitbucket.org/ziemertlab/artswebapp/raw/HEAD/docker-compose-artswebapp.yml
