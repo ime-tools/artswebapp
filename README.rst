@@ -106,3 +106,12 @@ Extra) Use nginx to proxy port 80 to 5000. As root::
     mv /etc/conf.d/default.conf /etc/conf.d/default.bkup
     cp config/nginx_siteavailible.conf /etc/conf.d/default.conf
     sudo service nginx restart
+
+Support
+--------
+
+If you have any issues or would like extra help please feel free to contact us at ars-support@ziemertlab.com
+
+Licence
+--------
+This software is licenced under the GPLv3. See LICENCE.txt for details.
