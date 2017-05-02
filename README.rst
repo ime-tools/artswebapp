@@ -110,7 +110,7 @@ Extra) Use nginx to proxy port 80 to 5000. As root::
 Support
 --------
 
-If you have any issues or would like extra help please feel free to contact us at ars-support@ziemertlab.com
+If you have any issues please feel free to contact us at arts-support@ziemertlab.com
 
 Licence
 --------
