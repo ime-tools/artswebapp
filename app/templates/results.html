@@ -21,9 +21,11 @@
                   </div>
                   <div class="col-sm-10">
                       {% for result in recentresults %}
-                    <h4><a href="/results/{{ result.id }}" data-toggle="tooltip" data-placement="right" title="{{result.id}}">
-                        {{ result.orgname }}
-                    </a></h4>
+                        {% if result.jobtitle %}
+                        <h4><a href="/results/{{ result.id }}" data-toggle="tooltip" data-placement="right" title="{{result.id}}">{{ result.jobtitle }}</a></h4>
+                        {% else %}
+                        <h4><a href="/results/{{ result.id }}" data-toggle="tooltip" data-placement="right" title="{{result.id}}">{{ result.orgname }}</a></h4>
+                        {% endif %}
                       {% endfor %}
                   </div>
             </div>

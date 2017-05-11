@@ -67,7 +67,7 @@ var d3pieobj = {"header":{"title":{"text":"Core Functions","fontSize":24,"font":
 
 function updatestatus(data){
     if (data.orgname) {
-        $('#jobtitle').html(data.orgname);
+        $('#jobtitle').html(data.jobtitle);
         $('#corecount').html(data.coretotal);
         $('#cdscount').html(data.cdscount);
         $('#bgccount').html(data.bgccount);
@@ -246,8 +246,10 @@ $(document).ready(function(){
             {"data":6,"visible":false,"defaultContent":""}
         ],
         createdRow: function ( row, data, index ) {
-            $('td',row).eq(4).html((data[4]*100).toFixed(1)+"%")
-            $('td',row).eq(5).html((data[5]*100).toFixed(1)+"%")
+            console.log(data);
+            $('td',row).eq(5).html((data[3]*100).toFixed(1)+"%")
+            $('td',row).eq(6).html((data[4]*100).toFixed(1)+"%")
+            $('td',row).eq(7).html((data[5]*100).toFixed(1)+"%")
         },
         aLengthMenu: [
         [10, 25, 50, 100, 200, -1],
@@ -281,6 +283,7 @@ $(document).ready(function(){
             {"data":5}
         ],
         createdRow: function ( row, data, index ) {
+            $(row).addClass("bgcrow");
             $('td',row).eq(1).html("<a href='antismash/index.html#"+data[0]+"' onclick='openaslink(this)' target='bgcwindow' class='aslink' title='view in antismash' data-toggle='tooltip' data-placement='right'>"+data[0]+"</a>");
             if (data[5].length == 0){
                 $('td',row).eq(0).removeClass();
@@ -350,7 +353,7 @@ $(document).ready(function(){
                 if (data.proximity == "Yes"){
                         $('td',row).eq(6).html("<span class='glyphicon glyphicon-ok'></span>");
                         $('td',row).eq(6).addClass("summtab_yes");
-                        $("#asresultslink").html("<a href='antismash/index.html' class='btn btn-primary' target='bgcwindow'>View BGC overview</a>");
+                        $("#asresultslink").html("<a href='antismash/index.html' class='btn btn-primary' target='bgcwindow'>View BGC overview</a> <a href='#' class='btn btn-primary' onclick='toggleallbgcrow(event)'>Expand/Collapse all</a>");
                     }
                 else if (data.proximity == "No"){
                         $('td',row).eq(6).html("<span class='glyphicon glyphicon-remove'></span>");
@@ -433,6 +436,7 @@ function formatbgcrow ( d, clust ) {
     else childstring = "<div style='text-align:center'>No cluster annotation found</div><br>";
     childstring += '<table cellpadding="5" class="table bgcChild">';
     childstring += '<tr><th>Sequence id</th><th>Location (start-end)</th><th>Type</th><th>Gene</th><th>Description</th><th>Function</th></tr>';
+    console.log(d);
     for (i = 0; i < d[6].length; i++){
 //        clust..push({start:parseInt(d[5][i][2]),strand:1,end:parseInt(d[5][i][3]),locus_tag:d[5][i][1],type:d[5][i][4],description:d[5][i][5]});
         if (clust) {
@@ -530,26 +534,33 @@ $('#dupTable tbody').on('click', 'td.details-control', function () {
 
 function openbgctr(tr){
     var row = bgcTable.row( tr );
-    if ( row.child.isShown() ) {
-        // This row is already open - close it
-        row.child.hide();
-        tr.removeClass('shown');
+    d = row.data();
+    clust = geneclusters[d[0]];
+    rslt = formatbgcrow(d,clust);
+    row.child( rslt[0] ).show();
+    tr.addClass('shown');
+    if (clust) svgene.drawClusters(d[0]+"-svg", [rslt[1]], 20, 800);
+}
+function closebgctr(tr){
+    var row = bgcTable.row( tr );
+    row.child.hide();
+    tr.removeClass('shown');
+}
+function togglebgctr(tr){
+    var row = bgcTable.row( tr );
+    if ( row.child.isShown()) {
+        closebgctr(tr)
     }
     else {
         // Open this row
-        d = row.data();
-        clust = geneclusters[d[0]];
-        rslt = formatbgcrow(d,clust);
-        row.child( rslt[0] ).show();
-        tr.addClass('shown');
-        if (clust) svgene.drawClusters(d[0]+"-svg", [rslt[1]], 20, 800);
-        //$(".svgene-orf").click(newtooltip_handler)
+        openbgctr(tr)
     }
 }
 
+
 $('#bgcTable tbody').on('click', 'td.details-control', function () {
-        var tr = $(this).closest('tr');
-        openbgctr(tr);
+        var tr = $(this).closest('tr',false);
+        togglebgctr(tr);
     } );
 
 //function exporttablesbtn(){
@@ -571,10 +582,12 @@ $('a.zoombtn').click(function zoomimg(e){
     }
 });
 
-function openbgcrow(x){
-    $("#bgcTable > tbody > tr").each(function(i,tr){
-        if (($(tr).find("a.aslink").text()) == x){
-            openbgctr($(tr));
+function openbgcrow(x,y){
+    y = typeof y !== 'undefined' ? y : 0;
+    $("#bgcTable > tbody > tr.bgcrow").each(function(i,tr){
+        if (($(tr).find("a.aslink").text()) == x || x == "all"){
+            if (y) closebgctr($(tr));
+            else openbgctr($(tr));
         }
     });
 }
@@ -597,6 +610,13 @@ $('#genetreeselector').on('change',function changegntree(){
 
 function copyToClipboard (text) {
     window.prompt ("Copy to clipboard: Ctrl+C, Enter", text);
+}
+
+bgctc=0
+function toggleallbgcrow(e){
+    e.preventDefault();
+    openbgcrow("all",bgctc%2);
+    bgctc+=1
 }
 
 function togglelog(){

@@ -146,7 +146,7 @@ def validatehmm(fname):
     return False
 
 def validatefile(fname, asfil=False):
-    validgbkext = ['gbk','genbank','gbff','gb']
+    validgbkext = ['gbk','genbank','gbff','gb','embl']
     validfakext = ['fasta','fa','fna','faa','fas']
     ext = os.path.splitext(fname)[1]
     if not asfil and ext[1:].lower() in validgbkext+validfakext:
@@ -347,12 +347,14 @@ def getjobstatus(jobid):
     rddb = getdb()
     rdir = os.path.join(app.config['RESULTS_FOLDER'],jobid)
     log = os.path.join(rdir,"arts-query.log")
+    jobtitle = os.path.join(rdir,"jobtitle.txt")
     status = {
         "id":str(jobid),
         "state":"",
         "start":"",
         "end":"",
         "orgname":str(jobid),
+        "jobtitle":str(jobid),
         "step":"",
         "tsteps":5,
         "buildtree":0,
@@ -443,7 +445,11 @@ def getjobstatus(jobid):
                     ptitle+=" with %s errors and %s warnings"%(errors,warnings)
             status["pwidth"] = pwidth
             status["ptitle"] = ptitle
-
+        if os.path.exists(jobtitle):
+            with open(jobtitle,"r") as fil:
+                status["jobtitle"] = fil.next().strip()
+        else:
+            status["jobtitle"] = status["orgname"]
     return status
 
 def checkresult(resid):
@@ -477,12 +483,16 @@ def getqorg(rdir):
     return qorg
 
 def getjobinfo(jobid):
-    temp = {"id":jobid,"age":"","orgname":jobid}
+    jobtitle = ""
+    temp = {"id":jobid,"age":"","orgname":jobid,"jobtitle":jobtitle}
     rd = os.path.join(app.config["RESULTS_FOLDER"],jobid)
     if os.path.isdir(rd):
         orgname = getqorg(rd)
         orgname = orgname if orgname else jobid
-        temp = {"id":jobid,"age":int(time.time()) - int(os.path.getctime(rd)),"orgname":orgname}
+        if os.path.exists(os.path.join(rd,"jobtitle.txt")):
+            with open(os.path.join(rd,"jobtitle.txt"),"r") as fil:
+                jobtitle = fil.next().strip()
+        temp = {"id":jobid,"age":int(time.time()) - int(os.path.getctime(rd)),"orgname":orgname,"jobtitle":jobtitle}
     return temp
 
 def getallresults():

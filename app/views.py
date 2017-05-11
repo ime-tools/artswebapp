@@ -214,7 +214,12 @@ def startjob():
 
                 mailer = threading.Thread(name='mail_sender', target=sendmail, args=("",artsjob.id,email))
                 mailer.start()
-
+            validchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 _-()"
+            jobtitle = request.form.get('jobtitle',False)
+            jobtitle = ''.join([c for c in str(jobtitle[:30]) if c in validchars])
+            if jobtitle and len(jobtitle):
+                with open(os.path.join(app.config['RESULTS_FOLDER'],artsjob.id,"jobtitle.txt"),"w") as fil:
+                    fil.write(jobtitle+"\n")
             return resp
 
             # return redirect("/results/%s"%artsjob.id)
