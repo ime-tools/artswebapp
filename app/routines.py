@@ -347,6 +347,7 @@ def getjobstatus(jobid):
     rddb = getdb()
     rdir = os.path.join(app.config['RESULTS_FOLDER'],jobid)
     log = os.path.join(rdir,"arts-query.log")
+    aslog = os.path.join(rdir,"antismash","statusfile.txt")
     jobtitle = os.path.join(rdir,"jobtitle.txt")
     status = {
         "id":str(jobid),
@@ -386,6 +387,9 @@ def getjobstatus(jobid):
             elif strt:
                 status["state"] = "Running"
                 status["start"] = int(strt)
+        if os.path.exists(aslog):
+            with open(aslog,"r") as fil:
+                status["state"] = "antiSMASH - %s"%fil.next().strip().replace("running:","")
         if os.path.exists(log):
             bt = 0
             tt = 0
