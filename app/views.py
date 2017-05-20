@@ -1,5 +1,5 @@
 
-import os, threading
+import os, threading, shutil
 from rendertree import rendertree
 from flask import render_template, jsonify, request, redirect, abort, make_response, send_from_directory, flash, copy_current_request_context
 from app import app
@@ -72,7 +72,7 @@ def showresult(jobid):
         #         lastresult = jobid
         #     resp.set_cookie('arts.lastresult',lastresult)
         # return resp
-        return render_template("showresult.html",resid=jobid)
+        return render_template("showresult.html",jobid=jobid)
     return abort(404)
 
 @app.route('/results/<jobid>/tables/<path:path>')
@@ -127,6 +127,18 @@ def exportfile(jobid,expfil):
     rd = os.path.join(app.config["RESULTS_FOLDER"],jobid)
     if jobid and routines.checkresult(jobid) and os.path.exists(os.path.join(rd,expfil)):
         return send_from_directory(rd,expfil)
+    return abort(404)
+
+@app.route('/archive/<jobfile>')
+def getarchive(jobfile):
+    jobid = os.path.splitext(jobfile)[0]
+    rd = os.path.join(app.config["RESULTS_FOLDER"],jobid)
+    ad = os.path.join(app.config.get("ARCHIVE_FOLDER","/tmp"))
+    if os.path.exists(os.path.join(ad,jobfile)):
+        return send_from_directory(ad,jobfile)
+    elif jobid and routines.checkresult(jobid):
+        shutil.make_archive(os.path.join(ad,str(jobid)),"zip",rd)
+        return send_from_directory(ad,jobfile)
     return abort(404)
 
 # @app.route('/results/<jobid>/<action>')

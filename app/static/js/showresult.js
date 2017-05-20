@@ -27,12 +27,12 @@ var genetreetimer = 0;
 var finished = 0;
 var geneclusters = 0;
 
-function rolloverpie(slice){
-    console.log("rollover",slice);
-}
-function rolloutpie(slice){
-    console.log("rollout",slice);
-}
+//function rolloverpie(slice){
+//    console.log("rollover",slice);
+//}
+//function rolloutpie(slice){
+//    console.log("rollout",slice);
+//}
 var sortgeneselector = function() {
     var optarr = $("#genetreeselector option");
     optarr.sort(function(a,b) {
@@ -143,7 +143,10 @@ function updatestatus(data){
     if (data.end || data.state == "Done" || finished){
         finished = 1;
         clearInterval(statustimer);
-        explinks = '<a class="btn btn-primary" style="width:400px" href="xlfile">Export Tables</a><br><br><a class="btn btn-primary" style="width:400px" href="export/alltrees.zip">Download All Trees</a><br><br><a class="btn btn-primary" style="width:400px" href="export/aligned_core_genes.zip">Download Aligned Core Gene Fastas</a>';
+        explinks = '<a class="btn btn-primary" style="width:400px" href="xlfile">Export Tables</a><br><br>';
+        explinks += '<a class="btn btn-primary" style="width:400px" href="export/alltrees.zip">Download All Trees</a><br><br>';
+        explinks += '<a class="btn btn-primary" style="width:400px" href="export/aligned_core_genes.zip">Download Aligned Core Gene Fastas</a><br><br>';
+        explinks += '<a class="btn btn-primary" style="width:400px" href="/archive/'+$("#jobid").val()+'.zip">Zip all results (Viewable in webapp)</a>';
         $('#exportlinks').html(explinks);
         $('#sptreediv').html("<img src='trees/speciesmlst' id='sptreeimg' width='800'>");
 
@@ -246,7 +249,6 @@ $(document).ready(function(){
             {"data":6,"visible":false,"defaultContent":""}
         ],
         createdRow: function ( row, data, index ) {
-            console.log(data);
             $('td',row).eq(5).html((data[3]*100).toFixed(1)+"%")
             $('td',row).eq(6).html((data[4]*100).toFixed(1)+"%")
             $('td',row).eq(7).html((data[5]*100).toFixed(1)+"%")
@@ -436,7 +438,6 @@ function formatbgcrow ( d, clust ) {
     else childstring = "<div style='text-align:center'>No cluster annotation found</div><br>";
     childstring += '<table cellpadding="5" class="table bgcChild">';
     childstring += '<tr><th>Sequence id</th><th>Location (start-end)</th><th>Type</th><th>Gene</th><th>Description</th><th>Function</th></tr>';
-    console.log(d);
     for (i = 0; i < d[6].length; i++){
 //        clust..push({start:parseInt(d[5][i][2]),strand:1,end:parseInt(d[5][i][3]),locus_tag:d[5][i][1],type:d[5][i][4],description:d[5][i][5]});
         if (clust) {
@@ -525,7 +526,6 @@ $('#dupTable tbody').on('click', 'td.details-control', function () {
         }
         else {
             // Open this row
-            console.log()
             row.child( formatduprow(dupTable.ajax.json()["hits"][row.data()[0]]) ).show();
             tr.addClass('shown');
             $('[data-toggle="tooltip"]').tooltip();
@@ -599,7 +599,6 @@ function openaslink(x){
 }
 
 function changegnselector(newvalue){
-    console.log("changing tree..."+newvalue);
     $('#genetreeselector').val(newvalue);
     $('#genetreeselector').change();
 }
