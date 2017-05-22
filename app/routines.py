@@ -20,6 +20,7 @@ import tempfile
 import re
 import time
 import json
+import zipfile
 #import subprocess
 
 from openpyxl import Workbook
@@ -456,11 +457,20 @@ def getjobstatus(jobid):
             status["jobtitle"] = status["orgname"]
     return status
 
-def checkresult(resid):
+def checkresult(jobid):
     rddb = getdb()
-    if os.path.isdir(os.path.join(app.config["RESULTS_FOLDER"],resid)):
+    if os.path.isdir(os.path.join(app.config["RESULTS_FOLDER"],jobid)):
         return True
-    elif rddb and "artsjob:%s"%resid in rddb.keys():
+    elif os.path.exists(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid)):
+        try:
+            fil = zipfile.ZipFile(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid),'r')
+            fil.extractall(os.path.join(app.config["RESULTS_FOLDER"],jobid))
+            fil.close()
+            return True
+        except Exception as e:
+            print "Error writing archived result"
+            return False
+    elif rddb and "artsjob:%s"%jobid in rddb.keys():
         return True
     return False
 
