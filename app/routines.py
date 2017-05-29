@@ -464,13 +464,9 @@ def checkresult(jobid):
         return True
     elif os.path.exists(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid)):
         try:
-            def unziparchive():
-                fil = zipfile.ZipFile(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid),'r')
-                os.mkdir(os.path.join(app.config["RESULTS_FOLDER"],jobid))
-                fil.extractall(os.path.join(app.config["RESULTS_FOLDER"],jobid))
-                fil.close()
-            unziper = threading.Thread(name="unzipper",target=unziparchive)
-            unziper.start()
+            fil = zipfile.ZipFile(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid),'r')
+            fil.extractall(os.path.join(app.config["RESULTS_FOLDER"],jobid))
+            fil.close()
             return True
         except Exception as e:
             print "Error writing archived result"
