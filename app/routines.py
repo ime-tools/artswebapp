@@ -21,6 +21,7 @@ import re
 import time
 import json
 import zipfile
+import threading
 #import subprocess
 
 from openpyxl import Workbook
@@ -463,9 +464,13 @@ def checkresult(jobid):
         return True
     elif os.path.exists(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid)):
         try:
-            fil = zipfile.ZipFile(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid),'r')
-            fil.extractall(os.path.join(app.config["RESULTS_FOLDER"],jobid))
-            fil.close()
+            def unziparchive():
+                fil = zipfile.ZipFile(os.path.join(app.config["ARCHIVE_FOLDER"],"%s.zip"%jobid),'r')
+                os.mkdir(os.path.join(app.config["RESULTS_FOLDER"],jobid))
+                fil.extractall(os.path.join(app.config["RESULTS_FOLDER"],jobid))
+                fil.close()
+            unziper = threading.Thread(name="unzipper",target=unziparchive)
+            unziper.start()
             return True
         except Exception as e:
             print "Error writing archived result"
