@@ -206,7 +206,7 @@ def startjob():
                 redirect("/analyze")
             if custcoremdl and custcoremdl=="Failed":
                 redirect("/analyze")
-            artsjob = routines.addjob(infile=filename,ref=request.form.get("refset","auto"),asrun=asrun,custmdl=custmdl,custcoremdl=custcoremdl,options=options,cut=searchmode)
+            artsjob = routines.addjob(infile=filename,ref=request.form.get("refset","auto"),asjob=request.form.get('asjobid',""),asrun=asrun,custmdl=custmdl,custcoremdl=custcoremdl,options=options,cut=searchmode)
 
             resp = make_response(redirect("/results/%s/report"%artsjob.id))
             saverun = request.form.get('saverun',False)
