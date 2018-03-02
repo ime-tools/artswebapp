@@ -54,7 +54,8 @@ def sendnotifymail(msg="",jobid="",to=""):
             msg = "Hello, your ARTS job has been submitted! Your job id is: "
         assert to, jobid
         msgobj = Message("Your ARTS Job (%s) has been submitted"%jobid,recipients=[to])
-        msgobj.html = "%s %s <br> <a href='https://arts.ziemertlab.com/results/%s'>https://arts.ziemertlab.com/results/%s</a>"%(msg,jobid,jobid,jobid)
+        msgobj.html = "%s %s <br> <a href='%sresults/%s'>%sresults/%s</a>"%(msg,jobid,request.url_root,jobid,request.url_root,jobid)
+        #msgobj.html = "%s %s <br> <a href='https://arts.ziemertlab.com/results/%s'>https://arts.ziemertlab.com/results/%s</a>"%(msg,jobid,jobid,jobid)
         mail.send(msgobj)
     except Exception as e:
         print "Warning: Email not sent, check email configuration"
